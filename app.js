@@ -60,7 +60,7 @@ app.get('/status', async (req, res) => {
     const data = await db.query('SELECT * FROM data ORDER BY stamp DESC LIMIT 10;');
     const prettyData = parsedData(data);
 
-    const statuses = ['', '', ''];
+    const statuses = ['0', '0', '0'];
     Object.keys(prettyData).forEach((key) => {
       if (key !== 'stamp') {
         const avg = prettyData[key].reduce((a, b) => a + b) / prettyData[key].length;
@@ -76,6 +76,7 @@ app.get('/status', async (req, res) => {
         }
       }
     })
+    console.log(statuses);
     res.status(200).json(statuses.join(''));
   } catch (err) {
 
