@@ -7,7 +7,7 @@ const parsedData = (data) => {
     temperature: [],
     humidity: [],
   }
-  data.slice(0, 600).forEach(row => {
+  data.slice(data.length - 100, data.length).forEach(row => {
     const d  = new Date(row.stamp);
     parsedData.stamp.push(d.toLocaleString());
     parsedData.moisture.push(row.moisture);

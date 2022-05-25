@@ -57,7 +57,7 @@ const indices = {
 
 app.get('/status', async (req, res) => {
   try {
-    const data = await db.query('SELECT * FROM data ORDER BY stamp DESC LIMIT 100;');
+    const data = await db.query('SELECT * FROM data ORDER BY stamp DESC LIMIT 10;');
     const prettyData = parsedData(data);
 
     const statuses = ['', '', ''];
