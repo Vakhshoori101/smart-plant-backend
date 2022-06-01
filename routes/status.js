@@ -47,6 +47,38 @@ statusRouter.get('/', async (req, res) => {
   } catch (err) {
     console.log(err.message);
   }
+});
+
+statusRouter.get('/message', async (req, res) => {
+  try {
+    const data = await db.query('SELECT * FROM data ORDER BY stamp DESC LIMIT 10;');
+    let thresholds = await db.query('SELECT * FROM thresholds');
+    thresholds = keysToCamel(thresholds);
+    const prettyData = parsedData(data);
+    const messages = {};
+
+    Object.keys(prettyData).forEach((key) => {
+      if (key !== 'stamp') {
+        const avg = prettyData[key].reduce((a, b) => a + b) / prettyData[key].length;
+        const minThreshold = thresholds[0]['min' + key.charAt(0).toUpperCase() + key.slice(1)]
+        const maxThreshold = thresholds[0]['max' + key.charAt(0).toUpperCase() + key.slice(1)]
+        const stat = parseInt(getStatus(avg, minThreshold, maxThreshold));
+
+        let message = ''
+        if (stat === 2) {
+          message = `${key} should be checked immediately`
+        } else if (stat === 1) {
+          message = `${key} should be checked soon`
+        } else {
+          message = `${key} is good`
+        }
+        messages[key] = {message, status: stat};
+      }
+    })
+    res.status(200).json(messages);
+  } catch (err) {
+    console.log(err.message);
+  }
 })
 
 module.exports = statusRouter;
